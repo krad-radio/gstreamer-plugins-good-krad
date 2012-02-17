@@ -58,6 +58,8 @@ else
 JPEG_DIR =
 endif
 
+KRADX_DIR = kradx
+
 if USE_LIBCACA
 LIBCACA_DIR = libcaca
 else
@@ -143,6 +145,7 @@ SUBDIRS = \
 	$(HAL_DIR) \
 	$(JACK_DIR) \
 	$(JPEG_DIR) \
+	$(KRADX_DIR) \
 	$(LIBCACA_DIR) \
 	$(LIBDV_DIR) \
 	$(LIBMNG_DIR) \
@@ -167,6 +170,7 @@ DIST_SUBDIRS = \
 	hal \
 	jack \
 	jpeg \
+	kradx \
 	libcaca \
 	libpng \
 	pulse \

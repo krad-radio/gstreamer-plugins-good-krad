@@ -29,6 +29,7 @@ GstIirEqualizer GstChildProxy
 GstIirEqualizer10Bands GstChildProxy GstPreset
 GstIirEqualizer3Bands GstChildProxy GstPreset
 GstIirEqualizerNBands GstChildProxy
+GstKradxsend GstTagSetter
 GstMJ2Mux GstTagSetter GstTagXmpWriter
 GstMP4Mux GstTagSetter GstTagXmpWriter
 GstMatroskaMux GstTagSetter
@@ -56,6 +57,7 @@ GstSpeexEnc GstTagSetter GstPreset
 GstSwitchSink GstChildProxy
 GstSwitchSrc GstChildProxy
 GstTagLibMux GstTagSetter
+GstTagMux GstTagSetter
 GstUDPSink GstURIHandler
 GstUDPSrc GstURIHandler
 GstV4l2Radio GstURIHandler GstImplementsInterface GstTuner GstPropertyProbe

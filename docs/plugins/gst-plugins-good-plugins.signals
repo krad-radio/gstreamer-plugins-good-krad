@@ -680,3 +680,11 @@ guint64  arg2
 guint64  arg3
 </SIGNAL>
 
+<SIGNAL>
+<NAME>GstKradxsend::connection-problem</NAME>
+<RETURNS>void</RETURNS>
+<FLAGS>c</FLAGS>
+GstKradxsend *gstkradxsend
+gint  arg1
+</SIGNAL>
+

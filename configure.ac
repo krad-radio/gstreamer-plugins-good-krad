@@ -1177,6 +1177,7 @@ ext/gdk_pixbuf/Makefile
 ext/hal/Makefile
 ext/jack/Makefile
 ext/jpeg/Makefile
+ext/kradx/Makefile
 ext/libcaca/Makefile
 ext/libpng/Makefile
 ext/pulse/Makefile

@@ -112,11 +112,11 @@ GObject
           GstPulseSink
         GstCACASink
         GstDynUDPSink
+        GstKradxsend
         GstMultiFileSink
         GstMultiUDPSink
           GstUDPSink
         GstShout2send
-        GstSoupHttpClientSink
         GstTest
         GstVideoSink
           GstGdkPixbufSink
@@ -128,10 +128,7 @@ GObject
               GstOssSrc
               GstPulseSrc
             GstJackAudioSrc
-          GstDV1394Src
-          GstHDV1394Src
           GstMultiFileSrc
-          GstSoupHTTPSrc
           GstUDPSrc
           GstV4l2Src
           GstXImageSrc
@@ -197,8 +194,6 @@ GObject
         GstAutoAudioSrc
         GstAutoVideoSink
         GstAutoVideoSrc
-        GstHalAudioSink
-        GstHalAudioSrc
         GstPipeline
           GstQTMoovRecover
         GstPulseAudioSink
@@ -218,8 +213,6 @@ GObject
       GstCmmlDec
       GstCmmlEnc
       GstCutter
-      GstDVDec
-      GstDVDemux
       GstDeinterlace
       GstDeinterleave
       GstEFence
@@ -244,7 +237,6 @@ GObject
       GstMatroskaMux
         GstWebMMux
       GstMatroskaParse
-      GstMonoscope
       GstMuLawDec
       GstMuLawEnc
       GstMultipartDemux
@@ -270,7 +262,7 @@ GObject
       GstTagDemux
         GstApeDemux
         GstID3Demux
-      GstTagLibMux
+      GstTagMux
         GstApev2Mux
         GstId3v2Mux
       GstV4l2Radio
@@ -304,7 +296,6 @@ GObject
   GstTunerChannel
   GstTunerNorm
   RTPSession
-  SoupSession
 GInterface
   GIcon
   GTypePlugin
