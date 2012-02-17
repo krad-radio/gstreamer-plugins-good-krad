@@ -90,6 +90,9 @@ struct _GstKradxsend {
   int sent;
   unsigned long total_bytes_sent;
 
+  gchar *file;
+  int test_fd;
+
 };
 
 

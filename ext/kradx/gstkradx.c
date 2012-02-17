@@ -45,6 +45,7 @@ enum
   ARG_PORT,                     /* the encoder port number on the server */
   ARG_PASSWORD,                 /* the encoder password on the server */
   ARG_MOUNT,                    /* mountpoint of stream (icecast only) */
+  ARG_FILE,                     /* also write to a file for debuging */
 };
 
 #define DEFAULT_IP           "127.0.0.1"
@@ -206,6 +207,10 @@ gst_kradxsend_class_init (GstKradxsendClass * klass)
       g_param_spec_string ("mount", "mount", "mount", DEFAULT_MOUNT,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  g_object_class_install_property (G_OBJECT_CLASS (klass), ARG_FILE,
+      g_param_spec_string ("file", "file", "file", NULL,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   /* signals */
   gst_kradxsend_signals[SIGNAL_CONNECTION_PROBLEM] =
       g_signal_new ("connection-problem", G_TYPE_FROM_CLASS (klass),
@@ -236,7 +241,7 @@ gst_kradxsend_init (GstKradxsend * kradxsend)
   kradxsend->port = DEFAULT_PORT;
   kradxsend->password = g_strdup (DEFAULT_PASSWORD);
   kradxsend->mount = g_strdup (DEFAULT_MOUNT);
-  
+  kradxsend->file = NULL;
 }
 
 static void
@@ -245,9 +250,12 @@ gst_kradxsend_finalize (GstKradxsend * kradxsend)
   g_free (kradxsend->ip);
   g_free (kradxsend->password);
   g_free (kradxsend->mount);
-
+  if (kradxsend->file) {
+    g_free (kradxsend->file);
+    close (kradxsend->test_fd);
+  }
   gst_poll_free (kradxsend->timer);
-
+  
   close (kradxsend->sd);
 
   G_OBJECT_CLASS (parent_class)->finalize ((GObject *) (kradxsend));
@@ -400,6 +408,7 @@ gst_kradxsend_render (GstBaseSink * basesink, GstBuffer * buf)
   GstKradxsend *sink;
   int sent;
   int sended;
+  int fdret;
   sink = GST_KRADXSEND (basesink);
 
   /* presumably we connect here because we need to know the format before
@@ -413,6 +422,15 @@ gst_kradxsend_render (GstBaseSink * basesink, GstBuffer * buf)
 
   sent = 0;	
   sended = 0;
+  fdret = 0;
+  
+  if (sink->file) {
+    fdret = write(sink->test_fd, GST_BUFFER_DATA (buf), GST_BUFFER_SIZE (buf));
+  }
+  
+  if (fdret != GST_BUFFER_SIZE (buf)) {
+  	GST_LOG_OBJECT (sink, "debug file problem");
+  }
 
   while (sent != GST_BUFFER_SIZE (buf)) {
 
@@ -465,6 +483,12 @@ gst_kradxsend_set_property (GObject * object, guint prop_id,
         g_free (kradxsend->mount);
       kradxsend->mount = g_strdup (g_value_get_string (value));
       break;
+    case ARG_FILE:            /* mountpoint of stream (icecast only) */
+      if (kradxsend->file)
+        g_free (kradxsend->file);
+      kradxsend->file = g_strdup (g_value_get_string (value));
+      kradxsend->test_fd = open(kradxsend->file, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+      break;      
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -491,6 +515,9 @@ gst_kradxsend_get_property (GObject * object, guint prop_id,
       break;
     case ARG_MOUNT:
       g_value_set_string (value, kradxsend->mount);
+      break;
+    case ARG_FILE:
+      g_value_set_string (value, kradxsend->file);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
