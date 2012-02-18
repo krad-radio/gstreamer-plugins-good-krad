@@ -242,6 +242,7 @@ gst_kradxsend_init (GstKradxsend * kradxsend)
   kradxsend->password = g_strdup (DEFAULT_PASSWORD);
   kradxsend->mount = g_strdup (DEFAULT_MOUNT);
   kradxsend->file = NULL;
+  kradxsend->test_fd = 0;
 }
 
 static void
@@ -252,7 +253,9 @@ gst_kradxsend_finalize (GstKradxsend * kradxsend)
   g_free (kradxsend->mount);
   if (kradxsend->file) {
     g_free (kradxsend->file);
-    close (kradxsend->test_fd);
+    if (kradxsend->test_fd) {
+	    close (kradxsend->test_fd);
+	}
   }
   gst_poll_free (kradxsend->timer);
   
@@ -370,6 +373,10 @@ gst_kradxsend_stop (GstBaseSink * basesink)
    close (sink->sd);
    sink->sd = 0;
   }
+  
+  if (sink->test_fd) {
+    close (sink->test_fd);
+  }
 
   sink->connected = FALSE;
 
@@ -424,14 +431,15 @@ gst_kradxsend_render (GstBaseSink * basesink, GstBuffer * buf)
   sended = 0;
   fdret = 0;
   
-  if (sink->file) {
+  if (sink->test_fd != 0) {
     fdret = write(sink->test_fd, GST_BUFFER_DATA (buf), GST_BUFFER_SIZE (buf));
+  
+    if (fdret != GST_BUFFER_SIZE (buf)) {
+  	  GST_LOG_OBJECT (sink, "debug file problem");
+    }
+  
   }
   
-  if (fdret != GST_BUFFER_SIZE (buf)) {
-  	GST_LOG_OBJECT (sink, "debug file problem");
-  }
-
   while (sent != GST_BUFFER_SIZE (buf)) {
 
     sended = send ( sink->sd, GST_BUFFER_DATA (buf) + sent, 
@@ -487,7 +495,9 @@ gst_kradxsend_set_property (GObject * object, guint prop_id,
       if (kradxsend->file)
         g_free (kradxsend->file);
       kradxsend->file = g_strdup (g_value_get_string (value));
-      kradxsend->test_fd = open(kradxsend->file, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+      if (strlen(kradxsend->file)) {
+        kradxsend->test_fd = open(kradxsend->file, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+      }
       break;      
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
